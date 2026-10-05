@@ -1,0 +1,61 @@
+opportunity_id,account,owner,stage,amount,close_date
+OPP-0001,Aperture,Carla Singh,Proposal,327000,2026-07-01
+OPP-0002,Initech,Bob Martinez,Proposal,201000,2026-07-14
+OPP-0003,Soylent,Dev Patel,Qualification,29000,2026-07-15
+OPP-0004,Initech,Dev Patel,Closed Won,124000,2026-07-20
+OPP-0005,Initech,Carla Singh,Closed Lost,230000,2026-07-21
+OPP-0006,Wonka,Alice Nguyen,Proposal,218000,2026-07-26
+OPP-0007,Monarch,Bob Martinez,Proposal,47000,2026-07-31
+OPP-0008,Stark Industries,Dev Patel,Qualification,269000,2026-08-11
+OPP-0009,Wonka,Alice Nguyen,Closed Lost,201000,2026-08-11
+OPP-0010,Dunder Mifflin,Dev Patel,Qualification,138000,2026-08-16
+OPP-0011,Soylent,Carla Singh,Negotiation,167000,2026-08-16
+OPP-0012,Acme Corp,Bob Martinez,Qualification,41000,2026-08-22
+OPP-0013,Aperture,Alice Nguyen,Qualification,327000,2026-08-29
+OPP-0014,Pied Piper,Bob Martinez,Negotiation,58000,2026-08-31
+OPP-0015,Wonka,Alice Nguyen,Prospecting,304000,2026-09-02
+OPP-0016,Wonka,Dev Patel,Prospecting,162000,2026-09-05
+OPP-0017,Massive Dynamic,Carla Singh,Qualification,157000,2026-09-09
+OPP-0018,Umbrella,Carla Singh,Proposal,58000,2026-09-12
+OPP-0019,Dunder Mifflin,Bob Martinez,Proposal,194000,2026-09-18
+OPP-0020,Stark Industries,Bob Martinez,Negotiation,58000,2026-09-20
+OPP-0021,Black Mesa,Alice Nguyen,Negotiation,260000,2026-09-21
+OPP-0022,Tyrell,Bob Martinez,Prospecting,229000,2026-09-23
+OPP-0023,Umbrella,Dev Patel,Prospecting,60000,2026-09-30
+OPP-0024,Acme Corp,Alice Nguyen,Negotiation,250000,2026-10-01
+OPP-0025,Hooli,Alice Nguyen,Closed Won,300000,2026-10-02
+OPP-0026,Soylent,Carla Singh,Proposal,316000,2026-10-02
+OPP-0027,Vandelay,Alice Nguyen,Prospecting,307000,2026-10-05
+OPP-0028,Wonka,Dev Patel,Proposal,328000,2026-10-08
+OPP-0029,Black Mesa,Dev Patel,Negotiation,131000,2026-10-11
+OPP-0030,Dunder Mifflin,Carla Singh,Closed Won,197000,2026-10-23
+OPP-0031,Wonka,Alice Nguyen,Prospecting,92000,2026-10-27
+OPP-0032,Initech,Carla Singh,Negotiation,372000,2026-11-02
+OPP-0033,Vandelay,Carla Singh,Proposal,91000,2026-11-07
+OPP-0034,Stark Industries,Bob Martinez,Closed Lost,500000,2026-11-15
+OPP-0035,Aperture,Alice Nguyen,Prospecting,62000,2026-11-16
+OPP-0036,Massive Dynamic,Bob Martinez,Proposal,83000,2026-11-26
+OPP-0037,Dunder Mifflin,Bob Martinez,Proposal,307000,2026-12-05
+OPP-0038,Gringotts,Dev Patel,Prospecting,374000,2026-12-06
+OPP-0039,Wayne Enterprises,Dev Patel,Prospecting,115000,2026-12-20
+OPP-0040,Oscorp,Carla Singh,Qualification,369000,2026-12-24
+OPP-0041,Acme Corp,Dev Patel,Qualification,212000,2026-12-25
+OPP-0042,Globex,Bob Martinez,Proposal,120000,2026-12-31
+OPP-0043,Initech,Carla Singh,Qualification,80000,2027-01-01
+OPP-0044,Cyberdyne,Bob Martinez,Proposal,247000,2027-01-02
+OPP-0045,Hooli,Alice Nguyen,Prospecting,285000,2027-01-02
+OPP-0046,Gringotts,Alice Nguyen,Closed Won,63000,2027-01-04
+OPP-0047,Wonka,Bob Martinez,Negotiation,198000,2027-01-11
+OPP-0048,Pied Piper,Dev Patel,Qualification,363000,2027-01-17
+OPP-0049,Globex,Alice Nguyen,Qualification,92000,2027-01-19
+OPP-0050,Oscorp,Dev Patel,Negotiation,384000,2027-01-19
+OPP-0051,Globex,Bob Martinez,Qualification,261000,2027-01-22
+OPP-0052,Tyrell,Dev Patel,Proposal,287000,2027-02-04
+OPP-0053,Tyrell,Alice Nguyen,Proposal,106000,2027-02-08
+OPP-0054,Stark Industries,Alice Nguyen,Prospecting,121000,2027-02-11
+OPP-0055,Cyberdyne,Alice Nguyen,Proposal,190000,2027-02-15
+OPP-0056,Hooli,Dev Patel,Prospecting,317000,2027-02-24
+OPP-0057,Oscorp,Dev Patel,Proposal,74000,2027-03-07
+OPP-0058,Gringotts,Dev Patel,Qualification,194000,2027-03-12
+OPP-0059,Monarch,Alice Nguyen,Closed Lost,368000,2027-03-21
+OPP-0060,Vandelay,Carla Singh,Prospecting,229000,2027-03-31
