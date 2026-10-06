@@ -8,7 +8,7 @@ backed by `data/opportunities.csv` (60 sample opportunities, close dates Jul 202
 | `pipeline.py` | Pure logic: quarter parsing, stage aggregation (no MCP dependency) |
 | `server.py` | MCP server (stdio): `get_current_quarter`, `pipeline_by_stage`, `list_opportunities` |
 | `agent.py` | Claude tool-use loop over the MCP server (`claude-sonnet-5-5`, override with `AGENT_MODEL`) |
-| `evals/` | 10 cases (`cases.json`), independent ground truth (`truth.py`), graders, live runner |
+| `evals/` | 15 cases (`cases.json`), independent ground truth (`truth.py`), graders, live runner |
 | `tests/` | Offline tests: logic, graders, and agent loop with a fake Claude client |
 
 ## Architecture
@@ -29,6 +29,7 @@ Weighted pipeline uses 10/25/50/75%.
 python3.11 -m venv .venv && .venv/bin/pip install -r requirements.txt   # mcp needs Python >= 3.10
 export ANTHROPIC_API_KEY=...
 .venv/bin/python agent.py "What's our pipeline this quarter by stage?"
+.venv/bin/python demo_server.py                          # call the MCP server directly, no key needed
 .venv/bin/python -m pytest -q tests                      # offline, no key needed
 .venv/bin/python -m evals.run_evals --trials 3           # live evals; "today" pinned to 2026-10-05
 ```
@@ -41,3 +42,15 @@ closed-won vs pipeline, top stage, owner filter, a quarter with no data (must no
 unsupported dimension (region; must say it's unavailable). The data includes quarter-boundary dates
 (2026-09-30, 10-01, 12-31, 2027-01-01) and a large Closed Lost deal, and the graders fail any answer that
 lumps closed deals into the pipeline total. Graders accept `$1.2M`/`$450K`/`1,234,567` within display rounding.
+
+Five harder cases (`hard_*`) probe relative dates ("last quarter"), a year-less "Q4", a misspelled owner name,
+a request that conflicts with the pipeline definition ("including closed-won"), and a quarter-boundary date.
+
+## Results
+15 cases x 3 runs = **45/45 passing** (`claude-sonnet-5-5`, sample data, as-of date pinned to 2026-10-05).
+
+The eval set caught one real bug: for the misspelled owner "Alice Ngyuen", `pipeline_by_stage` silently returned
+$0 and the agent reported it as fact (**0/3** on that case). The tool now rejects unknown owners and suggests the
+closest match, after which the case passed **3/3**. The fix was in the tool, not the prompt.
+
+Limits: small sample dataset and a small eval set. This tests a method, not a benchmark.
