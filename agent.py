@@ -19,6 +19,7 @@ SYSTEM = """You are a sales-operations analyst. Answer questions about the sales
 - "Pipeline" means open opportunities (Prospecting, Qualification, Proposal, Negotiation). Closed Won and Closed Lost are not pipeline.
 - Report figures exactly as the tools return them (you may format as $1.2M). Never estimate or invent numbers.
 - If the data cannot answer the question (missing field, no data for the period), say so plainly instead of guessing.
+- Use as few tool calls as possible (usually one or two). Never retry with different filters to hunt for a field the data does not have; if a filter matches nothing, or the data lacks the field, say so and stop.
 - Be concise: lead with the answer, show a small stage table when asked for a breakdown, state the quarter used."""
 
 
@@ -31,9 +32,9 @@ async def mcp_session():
             yield session
 
 
-async def ask(question: str, session: ClientSession, max_turns: int = 8) -> dict:
+async def ask(question: str, session: ClientSession, max_turns: int = 6) -> dict:
     """Run the tool-use loop. Returns {"answer": str, "tool_calls": [{"name", "input", "result"}]}."""
-    client = anthropic.AsyncAnthropic()
+    client = anthropic.AsyncAnthropic(timeout=60.0, max_retries=2)
     tools = [{"name": t.name, "description": t.description, "input_schema": t.inputSchema}
              for t in (await session.list_tools()).tools]
     messages = [{"role": "user", "content": question}]
@@ -50,6 +51,7 @@ async def ask(question: str, session: ClientSession, max_turns: int = 8) -> dict
             if b.type == "tool_use":
                 out = await session.call_tool(b.name, b.input)
                 text = "".join(c.text for c in out.content if c.type == "text")
+                print(f"    [tool] {b.name}({dict(b.input)})", file=sys.stderr, flush=True)
                 calls.append({"name": b.name, "input": b.input, "result": text})
                 results.append({"type": "tool_result", "tool_use_id": b.id, "content": text,
                                 "is_error": bool(out.isError)})

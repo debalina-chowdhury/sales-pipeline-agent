@@ -51,3 +51,10 @@ def test_weighted_and_owner_filter():
 def test_empty_quarter():
     r = pipeline.pipeline_by_stage("2030-Q2")
     assert r["total_open_pipeline"] == 0 and r["open_deal_count"] == 0
+
+
+def test_unknown_owner_is_an_error_not_zero():
+    for fn in (pipeline.pipeline_by_stage, pipeline.list_opportunities):
+        r = fn("2026-Q4", owner="Alice Ngyuen")
+        assert "error" in r and "total_open_pipeline" not in r
+        assert r["did_you_mean"][0] == "Alice Nguyen"

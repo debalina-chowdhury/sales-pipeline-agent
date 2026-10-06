@@ -39,3 +39,7 @@ def metric(quarter, name, owner=None):
     if name == "total_all_stages":  # the wrong answer: open + closed lumped together
         return sum(r["amount"] for r in rows)
     raise KeyError(name)
+
+
+def rows_on(day: str):
+    return [{**r, "amount": int(r["amount"])} for r in csv.DictReader(CSV.open()) if r["close_date"] == day]

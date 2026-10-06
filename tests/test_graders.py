@@ -47,3 +47,20 @@ def test_no_data_and_unsupported():
     un = {"expect": {"kind": "unsupported", "forbidden_regions": ["EMEA", "APAC"]}}
     assert grade(un, "The data has no region field, so I can't break it down by region.", []) == []
     assert grade(un, "EMEA has $1M and APAC $2M by region.", [])
+
+
+def test_hard_case_graders():
+    ty = {"expect": {"kind": "owner_typo", "quarter": Q, "owner": "Alice Nguyen"}}
+    total = truth.metric(Q, "total_open", owner="Alice Nguyen")
+    assert grade(ty, f"Assuming you mean Alice Nguyen: ${total:,}.", []) == []
+    assert grade(ty, "I couldn't find an owner named Ngyuen. Did you mean Alice Nguyen?", []) == []
+    assert grade(ty, "Alice Ngyuen has $0 in open pipeline.", [])
+
+    mu = {"expect": {"kind": "multi", "quarter": Q, "metrics": ["total_open", "closed_won"], "forbid": "total_all_stages"}}
+    o, w = truth.metric(Q, "total_open"), truth.metric(Q, "closed_won")
+    assert grade(mu, f"Open: ${o:,}. Closed-won: ${w:,}. Combined ${o + w:,}.", []) == []
+    assert grade(mu, f"Total ${truth.metric(Q, 'total_all_stages'):,}; open ${o:,}; won ${w:,}", [])
+
+    dd = {"expect": {"kind": "date_deals", "date": "2026-12-31", "neighbour": "2027-01-01"}}
+    assert grade(dd, "OPP-0042 (Globex) for $120,000 closes that day.", []) == []
+    assert any("OPP-0043" in f for f in grade(dd, "OPP-0042 and OPP-0043, $120,000", []))

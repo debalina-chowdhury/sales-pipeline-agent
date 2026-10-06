@@ -65,6 +65,33 @@ def grade(case: dict, answer: str, trace: list[dict]) -> list[str]:
             wrong = truth.metric(q, "total_all_stages", owner)
             if has_amount(answer, wrong):
                 fails.append(f"reports {wrong:,}, which wrongly includes closed deals")
+    elif kind == "multi":
+        for m in e["metrics"]:
+            want = truth.metric(q, m)
+            if not has_amount(answer, want):
+                fails.append(f"{m} {want:,.0f} missing")
+        wrong = truth.metric(q, e["forbid"])
+        if has_amount(answer, wrong):
+            fails.append(f"reports {wrong:,}, which wrongly includes closed-lost deals")
+    elif kind == "owner_typo":
+        want = truth.metric(q, "total_open", owner=owner)
+        resolved = has_amount(answer, want)
+        asked = owner.split()[-1].lower() in answer.lower() and re.search(
+            r"did you mean|no (?:such )?owner|not found|couldn'?t find|can'?t find|no match|unknown", answer, re.I)
+        if not (resolved or asked):
+            fails.append(f"neither resolved the typo to {owner} ({want:,}) nor flagged the unknown name")
+        if re.search(r"\$\s*0\b|\bzero\b", answer) and not resolved:
+            fails.append("reports $0 pipeline for a name that simply does not exist")
+    elif kind == "date_deals":
+        rows = truth.rows_on(e["date"])
+        for r in rows:
+            if r["opportunity_id"] not in answer:
+                fails.append(f"missing {r['opportunity_id']}")
+        for r in truth.rows_on(e["neighbour"]):
+            if r["opportunity_id"] in answer:
+                fails.append(f"includes {r['opportunity_id']} from {e['neighbour']}")
+        if rows and not has_amount(answer, sum(r["amount"] for r in rows)):
+            fails.append("total for the date missing")
     elif kind == "top_stage":
         bs = truth.by_stage(q)
         top = max(bs, key=bs.get)

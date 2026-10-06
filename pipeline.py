@@ -1,5 +1,6 @@
 """Pure pipeline logic over the opportunities CSV (no MCP dependency, easy to unit test)."""
 import csv
+import difflib
 import os
 import re
 from datetime import date
@@ -53,6 +54,17 @@ def current_quarter() -> dict:
     return {"quarter": f"{y}-Q{q}", "start": s.isoformat(), "end": e.isoformat(), "as_of": today().isoformat()}
 
 
+def _unknown_owner(owner: str | None) -> dict | None:
+    """Error payload (with closest-match suggestions) if `owner` matches nobody in the data."""
+    owners = sorted({r["owner"] for r in load()})
+    if not owner or owner.lower() in {o.lower() for o in owners}:
+        return None
+    return {"error": f"No opportunity owner named {owner!r}.",
+            "did_you_mean": difflib.get_close_matches(owner, owners, n=2, cutoff=0.6),
+            "valid_owners": owners,
+            "instruction": "Do not report $0. Tell the user the name was not found and confirm the suggested match."}
+
+
 def _in_quarter(rows: list[dict], quarter: str | None) -> tuple[str, list[dict]]:
     y, q = parse_quarter(quarter)
     s, e = quarter_bounds(y, q)
@@ -64,6 +76,8 @@ def pipeline_by_stage(quarter: str | None = None, owner: str | None = None) -> d
 
     Closed Won / Closed Lost are not pipeline; Closed Won is reported separately as `closed_won`.
     """
+    if err := _unknown_owner(owner):
+        return err
     label, rows = _in_quarter(load(), quarter)
     if owner:
         rows = [r for r in rows if r["owner"].lower() == owner.lower()]
@@ -89,14 +103,21 @@ def pipeline_by_stage(quarter: str | None = None, owner: str | None = None) -> d
 
 def list_opportunities(quarter: str | None = None, stage: str | None = None,
                        owner: str | None = None, limit: int = 25) -> dict:
+    if err := _unknown_owner(owner):
+        return err
     label, rows = _in_quarter(load(), quarter)
     if stage:
         rows = [r for r in rows if r["stage"].lower() == stage.lower()]
     if owner:
         rows = [r for r in rows if r["owner"].lower() == owner.lower()]
     rows.sort(key=lambda r: -r["amount"])
-    return {
+    out = {
         "quarter": label,
         "total_matches": len(rows),
         "opportunities": [{**r, "close_date": r["close_date"].isoformat()} for r in rows[:limit]],
     }
+    if not rows:
+        out["hint"] = ("No matches. Valid stages: " + ", ".join(OPEN_STAGES + CLOSED_STAGES)
+                       + ". Valid owners: " + ", ".join(sorted({r["owner"] for r in load()}))
+                       + ". The data has no other fields (e.g. no region); do not retry with other filters.")
+    return out

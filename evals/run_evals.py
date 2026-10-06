@@ -29,7 +29,11 @@ async def main():
     async with mcp_session() as session:
         for case in cases:
             for t in range(args.trials):
-                out = await ask(case["question"], session)
+                print(f"RUN   {case['id']} (trial {t + 1}) ...", flush=True)
+                try:
+                    out = await asyncio.wait_for(ask(case["question"], session), timeout=120)
+                except asyncio.TimeoutError:
+                    out = {"answer": "(timed out after 120s)", "tool_calls": []}
                 fails = grade(case, out["answer"], out["tool_calls"])
                 passed += not fails
                 print(f"{'PASS' if not fails else 'FAIL'}  {case['id']} (trial {t + 1})")

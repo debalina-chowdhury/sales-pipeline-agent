@@ -25,7 +25,7 @@ def test_agent_loop_calls_tool_and_returns_text(monkeypatch):
             total = truth.metric("2026-Q4", "total_open")
             return NS(stop_reason="end_turn", content=[NS(type="text", text=f"Open pipeline: ${total:,}")])
 
-    monkeypatch.setattr(agent.anthropic, "AsyncAnthropic", lambda: NS(messages=FakeMessages()))
+    monkeypatch.setattr(agent.anthropic, "AsyncAnthropic", lambda **kw: NS(messages=FakeMessages()))
 
     async def run():
         async with agent.mcp_session() as s:
